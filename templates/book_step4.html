@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Progress Bar -->
+        <div class="progress mb-4" style="height: 25px;">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">Step 4: Date & Time</div>
+        </div>
+        
+        <h2 class="mb-4 text-center">Select Date and Time</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form action="{{ url_for('book_step4') }}" method="POST">
+                    
+                    {% if slots_by_date %}
+                        <div class="accordion mb-4" id="slotsAccordion">
+                            {% for date_str, slots in slots_by_date.items() %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                    <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ loop.index }}">
+                                        <strong>{{ date_str }}</strong>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#slotsAccordion">
+                                    <div class="accordion-body">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% for slot in slots %}
+                                            {% set unique_id = date_str|replace(',','')|replace(' ','') ~ loop.index0 %}
+                                            <input type="radio" class="btn-check" name="slot" id="slot{{ unique_id }}" value="{{ slot.date_val }}|{{ slot.time_val }}|{{ slot.end_time_val }}" required>
+                                            <label class="btn btn-outline-primary" for="slot{{ unique_id }}">{{ slot.display_time }}</label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mb-4">
+                            The selected doctor does not have any available time slots at the moment. Please select a different doctor or try again later.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('book_step3') }}" class="btn btn-outline-secondary">Back to Doctor</a>
+                        <button type="submit" class="btn btn-primary" {% if not slots_by_date %}disabled{% endif %}>Next: Confirm Details</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

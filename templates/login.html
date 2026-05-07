@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">Login</h3>
+                
+                <ul class="nav nav-tabs mb-4" id="loginTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="patient-tab" data-bs-toggle="tab" data-bs-target="#patient" type="button" role="tab" aria-controls="patient" aria-selected="true">Patient</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee" type="button" role="tab" aria-controls="employee" aria-selected="false">Doctor / Staff</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="loginTabsContent">
+                    <!-- Patient / User Login Form -->
+                    <div class="tab-pane fade show active" id="patient" role="tabpanel" aria-labelledby="patient-tab">
+                        <form action="{{ url_for('login') }}" method="POST">
+                            <input type="hidden" name="login_type" value="user">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <label for="password" class="form-label">Password</label>
+                                    <a href="{{ url_for('forgot_password') }}" class="text-decoration-none small text-muted">Forgot Password?</a>
+                                </div>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <span>Don't have an account? </span>
+                                <a href="{{ url_for('register') }}" class="text-decoration-none">Register here</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Employee Login Form -->
+                    <div class="tab-pane fade" id="employee" role="tabpanel" aria-labelledby="employee-tab">
+                        <form action="{{ url_for('login') }}" method="POST">
+                            <input type="hidden" name="login_type" value="employee">
+                            <div class="mb-3">
+                                <label for="employee_tag" class="form-label">Employee Tag</label>
+                                <input type="text" class="form-control" id="employee_tag" name="employee_tag" placeholder="Enter your unique employee tag" required>
+                                <div class="form-text">No password required. Please scan or enter your tag.</div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Admin Login Link -->
+        <div class="text-center mt-3">
+            <a href="#" class="text-muted text-decoration-none" data-bs-toggle="modal" data-bs-target="#adminLoginModal"><small>Admin Login</small></a>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ url_for('login') }}" method="POST">
+          <input type="hidden" name="login_type" value="admin">
+          <div class="modal-header">
+            <h5 class="modal-title" id="adminLoginModalLabel">Admin Access</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+             <div class="mb-3">
+                <label for="admin_email" class="form-label">Admin Email</label>
+                <input type="email" class="form-control" id="admin_email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="admin_password" class="form-label">Admin Password</label>
+                <input type="password" class="form-control" id="admin_password" name="password" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-dark">Login as Admin</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

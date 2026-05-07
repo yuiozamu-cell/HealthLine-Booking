@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Edit Profile</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('doctor_profile') }}" method="POST">
+                    <input type="hidden" name="action" value="update_profile">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Employee Tag (For Login)</label>
+                        <input type="text" class="form-control" value="{{ employee.employee_tag }}" readonly disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ employee.name }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Add Weekly Availability Schedule</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('doctor_profile') }}" method="POST">
+                    <input type="hidden" name="action" value="add_slot">
+                    <div class="mb-3">
+                        <label class="form-label">Day of Week</label>
+                        <select class="form-select" name="day_of_week" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control" name="time" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">End Time</label>
+                            <input type="time" class="form-control" name="end_time" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Schedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Services Handled</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    {% for s in assigned_services %}
+                    <form action="{{ url_for('doctor_profile') }}" method="POST" class="d-inline">
+                        <input type="hidden" name="action" value="remove_service">
+                        <input type="hidden" name="service_id" value="{{ s.id }}">
+                        <span class="badge bg-secondary p-2 d-flex align-items-center gap-2" style="font-size: 0.9rem;">
+                            {{ s.service_name }}
+                            <button type="submit" class="btn-close btn-close-white" style="font-size: 0.5rem;" aria-label="Remove" onclick="return confirm('Remove this service from your profile?')"></button>
+                        </span>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">You are not handling any services yet.</span>
+                    {% endfor %}
+                </div>
+                
+                <hr>
+                
+                <form action="{{ url_for('doctor_profile') }}" method="POST" class="d-flex gap-2 align-items-end">
+                    <input type="hidden" name="action" value="add_service">
+                    <div class="flex-grow-1">
+                        <label class="form-label text-muted small mb-1">Add Another Service</label>
+                        <select class="form-select" name="service_id" required>
+                            <option value="">Select a service...</option>
+                            {% for s in available_services %}
+                            <option value="{{ s.id }}">{{ s.service_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info text-white fw-bold" {% if not available_services %}disabled{% endif %}>Add</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">My Recurring Weekly Schedule</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Day of Week</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr>
+                            <td><strong>{{ schedule.day_of_week }}</strong></td>
+                            <td>{{ schedule.display_time }}</td>
+                            <td>
+                                <a href="{{ url_for('delete_schedule', id=schedule.id) }}" class="btn btn-sm btn-outline-danger">Remove</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4">No schedules added. Add your availability so patients can book you!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
